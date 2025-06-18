@@ -61,34 +61,27 @@ void handler(int sig) {
 int main(int argc, char **argv) {
     struct sockaddr_in recvr;
     struct sigaction ioact, alrmact, intact;
-
     if (argc != 3) {
         printf("\tUsage: %s <IPaddress of the receiver machine> <send window>\n\n", argv[0]);
         exit(-1);
     }
-
     window = atoi(argv[2]);
     bzero(&recvr, sizeof(recvr));
     recvr.sin_family = AF_INET;
     recvr.sin_port = htons(PORT);
-
     if (inet_aton(argv[1], &recvr.sin_addr) == 0) {
         printf("Address conversion error\n");
         exit(-2);
     }
-
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Socket error: ");
         exit(-3);
     }
-
     if (connect(sock, (SA *)&recvr, sizeof(recvr)) < 0) {
         printf("No channel could be established\n");
         exit(-4);
     }
-
     printf("Channel established\n");
-
     ioact.sa_handler = handler; sigemptyset(&ioact.sa_mask);
     sigaddset(&ioact.sa_mask, SIGALRM); ioact.sa_flags = 0;
     sigaction(SIGIO, &ioact, NULL); alrmact.sa_handler = handler; sigemptyset(&alrmact.sa_mask);
@@ -111,6 +104,7 @@ int main(int argc, char **argv) {
 	    srecent++; sleep(1);
         }
     }
-    close(sock); return 0;
+    close(sock); 
+    return 0;
 }
 

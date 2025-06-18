@@ -11,9 +11,11 @@
 #define MAXBUF 512
 #define PORT 50000
 #define STR "This is our data"
+
 struct head {
     int seq, ack, nak;
 };
+
 struct frame {
     struct head header; char data[MAXBUF];
 };
@@ -31,7 +33,6 @@ void sendAck(int comm, int ack, int threshold) {
 void sendNak(int link, int nak, int threshold) {
     int noise;
     struct frame fr;
-
     noise = rand() % 10;
     if (noise > threshold) {
         fr.header.seq = -1;fr.header.ack = -1;
@@ -55,7 +56,6 @@ int main(int argc, char **argv) {
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Socket error: "); exit(-3);
     }
-
     if (bind(sock, (SA *)&this, sizeof(this)) < 0) {
         printf("Channel bind error\n"); exit(-4);
     }
@@ -67,8 +67,7 @@ int main(int argc, char **argv) {
 	exit(-5);
     }
 
-    printf("Channel established with %s at port %d\n", inet_ntoa(sendr.sin_addr),
-           ntohs(sendr.sin_port));
+    printf("Channel established with %s at port %d\n",inet_ntoa(sendr.sin_addr),ntohs(sendr.sin_port));
     for (;;) {
         int n = recv(comm, &f, sizeof(f), 0);
         if (n == 0) break;
